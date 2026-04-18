@@ -87,6 +87,23 @@
   .menu-toggle,
   .actions-toggle {
     display: inline-flex;
+    border-radius: 50%;
+    transition: background 0.15s ease;
+
+    &.active {
+      background: var(--p-primary-color);
+
+      ::ng-deep .p-button {
+        color: var(--p-primary-contrast-color);
+
+        &:hover,
+        &:focus,
+        &:active {
+          background: transparent;
+          color: var(--p-primary-contrast-color);
+        }
+      }
+    }
   }
 
   .topbar-actions {

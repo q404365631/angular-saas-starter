@@ -21,7 +21,7 @@
         <p-button icon="pi pi-user" severity="secondary" [text]="true" [rounded]="true" aria-label="Account" />
       </div>
 
-      <span class="menu-toggle">
+      <span class="menu-toggle" [class.active]="sidebarState.mobileOpen()">
         <p-button
           icon="pi pi-bars"
           severity="secondary"
@@ -31,7 +31,7 @@
           (onClick)="toggleMobile()"
         />
       </span>
-      <span class="actions-toggle">
+      <span class="actions-toggle" [class.active]="actionsOpen()">
         <p-button
           icon="pi pi-ellipsis-v"
           severity="secondary"
