@@ -80,7 +80,10 @@ export class Sidebar {
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((e) => this.syncExpandedFromUrl(e.urlAfterRedirects));
+      .subscribe((e) => {
+        this.syncExpandedFromUrl(e.urlAfterRedirects);
+        this.state.closeMobile();
+      });
 
     effect(() => {
       if (this.state.isNarrow()) {

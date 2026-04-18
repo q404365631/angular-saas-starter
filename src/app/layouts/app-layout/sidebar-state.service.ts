@@ -1,12 +1,15 @@
 import { Injectable, computed, effect, signal } from '@angular/core';
 
 const SIDEBAR_LOCKED_KEY = 'app:sidebar-locked';
+const MOBILE_QUERY = '(max-width: 991px)';
 
 @Injectable({ providedIn: 'root' })
 export class SidebarStateService {
   readonly locked = signal(this.loadLocked());
   readonly hovered = signal(false);
-  readonly isNarrow = computed(() => !this.locked() && !this.hovered());
+  readonly isMobile = signal(this.matchesMobile());
+  readonly mobileOpen = signal(false);
+  readonly isNarrow = computed(() => !this.isMobile() && !this.locked() && !this.hovered());
 
   constructor() {
     effect(() => {
@@ -16,6 +19,14 @@ export class SidebarStateService {
         // localStorage unavailable — ignore
       }
     });
+
+    if (typeof window !== 'undefined') {
+      const mq = window.matchMedia(MOBILE_QUERY);
+      mq.addEventListener('change', (e) => {
+        this.isMobile.set(e.matches);
+        if (!e.matches) this.mobileOpen.set(false);
+      });
+    }
   }
 
   toggleLock(): void {
@@ -26,6 +37,14 @@ export class SidebarStateService {
     this.hovered.set(hovered);
   }
 
+  toggleMobile(): void {
+    this.mobileOpen.update((v) => !v);
+  }
+
+  closeMobile(): void {
+    this.mobileOpen.set(false);
+  }
+
   private loadLocked(): boolean {
     try {
       const v = localStorage.getItem(SIDEBAR_LOCKED_KEY);
@@ -33,5 +52,10 @@ export class SidebarStateService {
     } catch {
       return true;
     }
+  }
+
+  private matchesMobile(): boolean {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia(MOBILE_QUERY).matches;
   }
 }

@@ -1,6 +1,8 @@
 <aside
   class="sidebar"
   [class.narrow]="state.isNarrow()"
+  [class.floating]="!state.locked()"
+  [class.mobile-open]="state.mobileOpen()"
   (mouseenter)="state.setHovered(true)"
   (mouseleave)="state.setHovered(false)"
 >
