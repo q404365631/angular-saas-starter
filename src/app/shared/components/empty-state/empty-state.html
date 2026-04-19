@@ -1,0 +1,14 @@
+<div class="empty-state">
+  <i [class]="'icon ' + icon()"></i>
+  <h3>{{ title() }}</h3>
+  @if (description()) {
+    <p>{{ description() }}</p>
+  }
+  @if (actionLabel(); as label) {
+    <p-button
+      [label]="label"
+      [icon]="actionIcon() ?? ''"
+      (onClick)="onAction()"
+    />
+  }
+</div>

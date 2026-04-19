@@ -1,10 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-access-denied',
-  imports: [RouterLink, ButtonModule],
+  imports: [RouterLink, ButtonModule, TranslatePipe],
   templateUrl: './access-denied.html',
   styleUrl: './access-denied.scss',
 })

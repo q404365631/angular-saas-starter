@@ -1,6 +1,7 @@
-import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
+import { Component, DestroyRef, afterNextRender, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { SidebarStateService } from '../sidebar-state.service';
 
@@ -18,7 +19,7 @@ interface NavSection {
 
 @Component({
   selector: 'app-sidebar',
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, TranslatePipe],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
 })
@@ -28,45 +29,46 @@ export class Sidebar {
   protected readonly state = inject(SidebarStateService);
 
   protected readonly expandedGroups = signal(new Set<string>());
+  protected readonly ready = signal(false);
 
   protected readonly sections: NavSection[] = [
     {
-      label: 'Main',
+      label: 'main',
       items: [
-        { label: 'Dashboard', icon: 'pi pi-home', route: '/dashboard' },
-        { label: 'Reports', icon: 'pi pi-chart-bar', route: '/reports' },
+        { label: 'dashboard', icon: 'pi pi-home', route: '/dashboard' },
+        { label: 'reports', icon: 'pi pi-chart-bar', route: '/reports' },
       ],
     },
     {
-      label: 'Management',
+      label: 'management',
       items: [
         {
-          label: 'Projects',
+          label: 'projects',
           icon: 'pi pi-folder',
           children: [
-            { label: 'All Projects', icon: 'pi pi-list', route: '/projects' },
-            { label: 'Archived', icon: 'pi pi-inbox', route: '/projects/archived' },
+            { label: 'allProjects', icon: 'pi pi-list', route: '/projects' },
+            { label: 'archived', icon: 'pi pi-inbox', route: '/projects/archived' },
           ],
         },
         {
-          label: 'Users',
+          label: 'users',
           icon: 'pi pi-users',
           children: [
-            { label: 'All Users', icon: 'pi pi-list', route: '/users' },
+            { label: 'allUsers', icon: 'pi pi-list', route: '/users' },
           ],
         },
       ],
     },
     {
-      label: 'Admin',
+      label: 'admin',
       items: [
         {
-          label: 'Settings',
+          label: 'settings',
           icon: 'pi pi-cog',
           children: [
-            { label: 'Profile', icon: 'pi pi-user', route: '/settings/profile' },
-            { label: 'Team', icon: 'pi pi-users', route: '/settings/team' },
-            { label: 'Billing', icon: 'pi pi-credit-card', route: '/settings/billing' },
+            { label: 'profile', icon: 'pi pi-user', route: '/settings/profile' },
+            { label: 'team', icon: 'pi pi-users', route: '/settings/team' },
+            { label: 'billing', icon: 'pi pi-credit-card', route: '/settings/billing' },
           ],
         },
       ],
@@ -74,6 +76,9 @@ export class Sidebar {
   ];
 
   constructor() {
+    this.state.setHovered(false);
+    this.state.closeMobile();
+    afterNextRender(() => this.ready.set(true));
     this.syncExpandedFromUrl(this.router.url);
     this.router.events
       .pipe(
@@ -83,6 +88,7 @@ export class Sidebar {
       .subscribe((e) => {
         this.syncExpandedFromUrl(e.urlAfterRedirects);
         this.state.closeMobile();
+        this.state.setHovered(false);
       });
 
     effect(() => {

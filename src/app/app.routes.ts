@@ -26,5 +26,10 @@ export const routes: Routes = [
     component: PublicLayout,
     loadChildren: () => import('./features/auth/auth.routes').then((m) => m.AUTH_ROUTES),
   },
-  { path: '**', redirectTo: 'dashboard' },
+  {
+    path: 'not-found',
+    loadComponent: () =>
+      import('./features/errors/pages/not-found/not-found').then((m) => m.NotFound),
+  },
+  { path: '**', redirectTo: 'not-found' },
 ];
