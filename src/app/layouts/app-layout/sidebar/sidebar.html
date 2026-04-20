@@ -3,6 +3,7 @@
   [class.narrow]="state.isNarrow()"
   [class.floating]="!state.locked()"
   [class.mobile-open]="state.mobileOpen()"
+  [class.ready]="ready()"
   (mouseenter)="state.setHovered(true)"
   (mouseleave)="state.setHovered(false)"
 >
@@ -32,7 +33,7 @@
               (click)="toggleGroup(item)"
             >
               <i [class]="item.icon"></i>
-              <span class="nav-label">{{ item.label }}</span>
+              <span class="nav-label">{{ item.label | translate }}</span>
               <i class="pi pi-chevron-right chevron"></i>
             </button>
 
@@ -46,7 +47,7 @@
                     class="nav-item child"
                   >
                     <i [class]="child.icon"></i>
-                    <span class="nav-label">{{ child.label }}</span>
+                    <span class="nav-label">{{ child.label | translate }}</span>
                   </a>
                 }
               </div>
@@ -58,7 +59,7 @@
               class="nav-item"
             >
               <i [class]="item.icon"></i>
-              <span class="nav-label">{{ item.label }}</span>
+              <span class="nav-label">{{ item.label | translate }}</span>
             </a>
           }
         }

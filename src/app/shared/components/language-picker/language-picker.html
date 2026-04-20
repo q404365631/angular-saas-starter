@@ -1,0 +1,24 @@
+<p-dialog
+  [(visible)]="visible"
+  [header]="'chooseLanguage' | translate"
+  [modal]="true"
+  [dismissableMask]="true"
+  [style]="{ width: '360px' }"
+>
+  <div class="lang-list">
+    @for (opt of options; track opt.code) {
+      <button
+        type="button"
+        class="lang-item"
+        [class.active]="opt.code === current()"
+        (click)="select(opt.code)"
+      >
+        <span class="flag">{{ opt.flag }}</span>
+        <span class="label">{{ opt.label }}</span>
+        @if (opt.code === current()) {
+          <i class="pi pi-check"></i>
+        }
+      </button>
+    }
+  </div>
+</p-dialog>

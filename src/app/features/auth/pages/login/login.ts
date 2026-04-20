@@ -1,15 +1,26 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { FieldError } from '../../../../shared/components/field-error/field-error';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterLink, ButtonModule, CardModule, InputTextModule, PasswordModule],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    ButtonModule,
+    CardModule,
+    InputTextModule,
+    PasswordModule,
+    FieldError,
+    TranslatePipe,
+  ],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
@@ -18,6 +29,7 @@ export class Login {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly translate = inject(TranslateService);
 
   protected readonly submitting = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -41,7 +53,7 @@ export class Login {
       },
       error: (err) => {
         this.submitting.set(false);
-        this.error.set(err?.error?.message ?? 'Sign in failed');
+        this.error.set(err?.error?.message ?? this.translate.instant('signInFailed'));
       },
       complete: () => this.submitting.set(false),
     });
