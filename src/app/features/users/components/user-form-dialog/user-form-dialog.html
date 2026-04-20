@@ -1,0 +1,83 @@
+<p-dialog
+  [(visible)]="open"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '28rem' }"
+  [header]="(isEdit() ? 'editUser' : 'newUser') | translate"
+>
+  <form class="user-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="grid">
+      <label>
+        <span>{{ 'firstName' | translate }}</span>
+        <input pInputText type="text" formControlName="firstName" />
+        <app-field-error [control]="form.get('firstName')" />
+      </label>
+
+      <label>
+        <span>{{ 'lastName' | translate }}</span>
+        <input pInputText type="text" formControlName="lastName" />
+        <app-field-error [control]="form.get('lastName')" />
+      </label>
+    </div>
+
+    <label>
+      <span>{{ 'email' | translate }}</span>
+      <input pInputText type="email" formControlName="email" [readonly]="isEdit()" />
+      <app-field-error [control]="form.get('email')" />
+    </label>
+
+    <div class="grid">
+      <label>
+        <span>{{ 'role' | translate }}</span>
+        <p-select
+          formControlName="role"
+          [options]="roleOptions"
+          optionLabel="label"
+          optionValue="value"
+          appendTo="body"
+        >
+          <ng-template #selectedItem let-opt>
+            @if (opt) { {{ opt.label | translate }} }
+          </ng-template>
+          <ng-template #item let-opt>
+            {{ opt.label | translate }}
+          </ng-template>
+        </p-select>
+      </label>
+
+      <label>
+        <span>{{ 'status' | translate }}</span>
+        <p-select
+          formControlName="status"
+          [options]="statusOptions"
+          optionLabel="label"
+          optionValue="value"
+          appendTo="body"
+        >
+          <ng-template #selectedItem let-opt>
+            @if (opt) { {{ opt.label | translate }} }
+          </ng-template>
+          <ng-template #item let-opt>
+            {{ opt.label | translate }}
+          </ng-template>
+        </p-select>
+      </label>
+    </div>
+
+    <div class="actions">
+      <p-button
+        type="button"
+        [label]="'cancel' | translate"
+        severity="secondary"
+        [text]="true"
+        (onClick)="onCancel()"
+      />
+      <p-button
+        type="submit"
+        [label]="(isEdit() ? 'saveChanges' : 'create') | translate"
+        [loading]="saving()"
+      />
+    </div>
+  </form>
+</p-dialog>
