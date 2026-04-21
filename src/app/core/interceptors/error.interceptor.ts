@@ -5,7 +5,7 @@ import {
   HttpInterceptorFn,
   HttpRequest,
 } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { EnvironmentInjector, inject, runInInjectionContext } from '@angular/core';
 import { Observable, Subject, catchError, switchMap, take, throwError } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { ToastService } from '../services/toast.service';
@@ -23,7 +23,7 @@ const SKIP_REFRESH = [
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
-  const toast = inject(ToastService);
+  const injector = inject(EnvironmentInjector);
 
   return next(req).pipe(
     catchError((err: HttpErrorResponse) => {
@@ -31,7 +31,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         return handle401(req, next, auth);
       }
       if (!req.context.get(SKIP_ERROR_TOAST)) {
-        surfaceError(err, toast);
+        runInInjectionContext(injector, () => {
+          surfaceError(err, inject(ToastService));
+        });
       }
       return throwError(() => err);
     }),
