@@ -1,28 +1,19 @@
-import { ErrorHandler, Injectable, inject } from '@angular/core';
-import { MessageService } from 'primeng/api';
+import { EnvironmentInjector, ErrorHandler, Injectable, inject } from '@angular/core';
+import { ToastService } from './services/toast.service';
 
 @Injectable()
 export class AppErrorHandler implements ErrorHandler {
-  private readonly toast = inject(MessageService);
+  private readonly injector = inject(EnvironmentInjector);
 
   handleError(error: unknown): void {
     console.error('[AppErrorHandler]', error);
-    const message = this.extractMessage(error);
-    this.toast.add({
-      severity: 'error',
-      summary: 'Unexpected error',
-      detail: message,
-      life: 6000,
-    });
-  }
-
-  private extractMessage(error: unknown): string {
-    if (error instanceof Error) return error.message;
-    if (typeof error === 'string') return error;
-    try {
-      return JSON.stringify(error);
-    } catch {
-      return 'An unexpected error occurred.';
-    }
+    const detail =
+      error instanceof Error ? error.message
+        : typeof error === 'string' ? error
+          : (typeof error === 'object' && error !== null && 'message' in error && typeof (error as { message: unknown }).message === 'string')
+            ? (error as { message: string }).message
+            : undefined;
+    const toast = this.injector.get(ToastService);
+    toast.error('unexpectedError', { detail });
   }
 }

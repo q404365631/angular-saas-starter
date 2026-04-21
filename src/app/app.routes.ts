@@ -15,6 +15,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/dashboard/dashboard').then((m) => m.Dashboard),
       },
       {
+        path: 'users',
+        loadComponent: () =>
+          import('./features/users/pages/users-list/users-list').then((m) => m.UsersList),
+      },
+      {
         path: 'access-denied',
         loadComponent: () =>
           import('./features/errors/pages/access-denied/access-denied').then((m) => m.AccessDenied),

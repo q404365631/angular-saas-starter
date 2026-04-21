@@ -1,0 +1,14 @@
+.app-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10000;
+  display: block;
+
+  ::ng-deep .p-progressbar {
+    border-radius: 0;
+    background: transparent;
+    height: 2px;
+  }
+}

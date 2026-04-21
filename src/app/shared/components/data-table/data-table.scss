@@ -1,0 +1,15 @@
+:host {
+  display: block;
+}
+
+::ng-deep .data-table {
+  .actions-col {
+    width: 1%;
+    white-space: nowrap;
+    text-align: right;
+  }
+
+  .empty-cell {
+    padding: 0;
+  }
+}

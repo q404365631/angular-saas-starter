@@ -1,0 +1,69 @@
+<div class="users-page">
+  <header class="page-header">
+    <div>
+      <h1>{{ 'users' | translate }}</h1>
+      <p>{{ 'usersSubtitle' | translate }}</p>
+    </div>
+    <p-button
+      icon="pi pi-plus"
+      [label]="'createUser' | translate"
+      (onClick)="openCreate()"
+    />
+  </header>
+
+  <app-data-table
+    [rows]="tableRows()"
+    [columns]="columns()"
+    [loading]="loading()"
+    [lazy]="true"
+    [paginator]="true"
+    [total]="total()"
+    [rowsPerPage]="rowsPerPage"
+    (lazyLoad)="onLazyLoad($event)"
+    [emptyTitle]="'noUsersYet' | translate"
+    [emptyDescription]="'noUsersDescription' | translate"
+  >
+    <ng-template appCell="name" let-value let-row="row">
+      <span class="user-name">{{ row['firstName'] }} {{ row['lastName'] }}</span>
+    </ng-template>
+
+    <ng-template appCell="role" let-value>
+      <p-tag [value]="'role' + roleKey(value) | translate" severity="secondary" />
+    </ng-template>
+
+    <ng-template appCell="status" let-value>
+      <p-tag
+        [value]="'status' + statusKey(value) | translate"
+        [severity]="severityFor(value)"
+      />
+    </ng-template>
+
+    <ng-template appCell="createdAt" let-value>
+      {{ value | date: 'mediumDate' }}
+    </ng-template>
+
+    <ng-template #actions let-user>
+      <p-button
+        icon="pi pi-pencil"
+        severity="secondary"
+        [text]="true"
+        [rounded]="true"
+        (onClick)="openEdit(user)"
+      />
+      <p-button
+        icon="pi pi-trash"
+        severity="danger"
+        [text]="true"
+        [rounded]="true"
+        (onClick)="confirmRemove(user)"
+      />
+    </ng-template>
+  </app-data-table>
+
+  <app-user-form-dialog
+    [(open)]="dialogOpen"
+    [user]="editing()"
+    [saving]="saving()"
+    (submitForm)="onSubmit($event)"
+  />
+</div>

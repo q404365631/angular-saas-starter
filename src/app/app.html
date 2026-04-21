@@ -1,3 +1,6 @@
 <p-toast position="top-right" />
 <p-confirmdialog />
+@if (loading.isLoading()) {
+  <p-progressBar mode="indeterminate" class="app-progress" [style]="{ height: '2px' }" />
+}
 <router-outlet />
