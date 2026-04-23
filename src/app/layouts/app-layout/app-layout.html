@@ -28,9 +28,10 @@
           (onClick)="userMenu.toggle($event)"
         />
       </div>
+      
       <p-menu #userMenu [model]="userMenuItems()" [popup]="true" appendTo="body" />
-        <app-language-picker [(visible)]="languageDialogOpen" />
-        <app-theme-picker [(visible)]="themeDialogOpen" />
+      <app-language-picker [(visible)]="languageDialogOpen" />
+      <app-theme-picker [(visible)]="themeDialogOpen" />
 
       <span class="menu-toggle" [class.active]="sidebarState.mobileOpen()">
         <p-button
