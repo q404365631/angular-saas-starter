@@ -1,59 +1,148 @@
-# Starter
+# Angular SaaS Starter
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.7.
+A batteries-included starter for building modern SaaS dashboards on **Angular 21** and **PrimeNG 21**, with authentication, role-based permissions, theming, and i18n wired up out of the box.
 
-## Development server
+[![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)](https://angular.dev)
+[![PrimeNG](https://img.shields.io/badge/PrimeNG-21-007ACC)](https://primeng.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-To start a local development server, run:
+---
 
-```bash
-ng serve
+## Why this starter
+
+Spinning up a SaaS frontend usually means re-solving the same problems: auth + token refresh, route guards, layout shells, theming, translations, error handling, toasts. This repo bundles a clean, opinionated baseline so you can skip the plumbing and focus on the product.
+
+## Features
+
+- **Angular 21** with standalone components, signals, and lazy-loaded routes.
+- **PrimeNG 21** UI library with the **Material** preset from `@primeuix/themes`.
+- **Authentication** — login, register, JWT access + refresh tokens, persistent session, `/auth/me` rehydration on app init.
+- **Route guards** — `authGuard`, `guestGuard`, and `permissionGuard`.
+- **Role-based permissions** with a typed permission key map.
+- **HTTP interceptors** for attaching tokens, refresh-on-401, and centralized error toasts (with opt-out via `HttpContext`).
+- **Internationalization** with `@ngx-translate` — English, Spanish, Turkish, and Ukrainian shipped, browser language detection, persisted preference.
+- **Theme picker** — runtime primary-color switching across 14 palettes via `@primeuix/themes`, persisted to `localStorage`.
+- **App shell layout** with responsive topbar, sidebar, and a separate public layout for unauthenticated pages.
+- **Users CRUD** feature with permission-gated actions, dialog form, and a reusable data table.
+- **Loading service** wired to the router for an automatic top-of-page progress bar.
+- **Centralized error handling** via a custom `ErrorHandler` and HTTP error interceptor.
+- **Vitest** unit tests for auth, guards, interceptors, and forms.
+- **Prettier** + EditorConfig defaults.
+
+## Tech stack
+
+| Area              | Choice                                             |
+| ----------------- | -------------------------------------------------- |
+| Framework         | Angular 21 (standalone APIs, signals)              |
+| UI                | PrimeNG 21 + PrimeIcons                            |
+| Theme             | `@primeuix/themes` (Material preset, custom token) |
+| HTTP              | `HttpClient` + functional interceptors             |
+| State             | Signals + RxJS where async                         |
+| i18n              | `@ngx-translate/core` + HTTP loader                |
+| Tests             | Vitest + JSDOM                                     |
+| Tooling           | Angular CLI 21, Prettier 3                         |
+
+## Project structure
+
+```
+src/app/
+├── core/                # cross-cutting concerns
+│   ├── auth/            # AuthService, models, storage
+│   ├── guards/          # auth, guest, permission
+│   ├── i18n/            # language service, supported langs
+│   ├── interceptors/    # auth + error interceptors, HttpContext keys
+│   ├── services/        # toast, confirm, loading
+│   ├── theme/           # theme service + palette tokens
+│   └── error-handler.ts
+├── features/            # feature modules (lazy-loaded)
+│   ├── auth/            # login, register pages
+│   ├── dashboard/
+│   ├── errors/          # not-found, access-denied
+│   ├── settings/
+│   └── users/           # users CRUD
+├── layouts/
+│   ├── app-layout/      # authenticated shell (topbar, sidebar)
+│   └── public-layout/   # unauthenticated pages
+└── shared/              # reusable components, directives, pipes, models
+
+public/i18n/             # translation JSON files (en, es, tr, uk)
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Getting started
 
-## Code scaffolding
+### Prerequisites
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- Node.js 20+
+- npm 11+
 
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### Install
 
 ```bash
-ng generate --help
+npm install
 ```
 
-## Building
+### Configure the API base URL
 
-To build the project run:
+Edit `src/environments/environment.ts` and point `apiUrl` at your backend. The auth service expects:
+
+- `POST /auth/login`
+- `POST /auth/register`
+- `POST /auth/logout`
+- `POST /auth/refresh`
+- `GET  /auth/me`
+
+### Run
 
 ```bash
-ng build
+npm start
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+The app serves at `http://localhost:4200` and reloads on changes.
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+### Build
 
 ```bash
-ng test
+npm run build
 ```
 
-## Running end-to-end tests
+Outputs production bundles to `dist/`.
 
-For end-to-end (e2e) testing, run:
+### Test
 
 ```bash
-ng e2e
+npm test
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Runs the Vitest suite (auth service, guards, interceptors, user form).
 
-## Additional Resources
+## Adding a translated string
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+1. Add the key to every file in `public/i18n/` (`en.json`, `es.json`, `tr.json`, `uk.json`).
+2. Use it in a template:
+
+   ```html
+   {{ 'users.create' | translate }}
+   ```
+
+The fallback language is `en`. New languages can be added by extending `SUPPORTED_LANGS` in `src/app/core/i18n/language.service.ts` and dropping a matching JSON file in `public/i18n/`.
+
+## Adding a permission-gated route
+
+```ts
+{
+  path: 'admin',
+  canActivate: [authGuard, permissionGuard('admin.view')],
+  loadComponent: () => import('./features/admin/admin').then((m) => m.Admin),
+}
+```
+
+Permission keys are mapped to roles in `src/app/core/auth/auth.service.ts`. Adjust `ROLE_PERMISSIONS` to match your domain.
+
+## Theming
+
+The active primary color is set at runtime via `ThemeService.set(color)` and persisted to `localStorage` under `app:theme-primary`. Available palettes are listed in `SUPPORTED_COLORS` (`src/app/core/theme/theme.service.ts`). Material is the default preset — swap it in `src/app/app.config.ts` if you prefer Aura, Lara, or Nora.
+
+## License
+
+[MIT](LICENSE) © Erkam Yaman
